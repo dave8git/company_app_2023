@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const ObjectId = require('mongodb').ObjectId;
 const Department = require('../models/department.model');
 
 router.get('/departments', async (req, res) => {
@@ -62,24 +61,22 @@ router.post('/departments', async (req, res) => {
 
 router.put('/departments/:id', async (req, res) => {
   const { name } = req.body;
+  console.log(name);
   try {
     const dep = await Department.findById(req.params.id);
-    if(dep) {
-      dep.name = name;
-      await dep.save();
-      res.json({ message: 'OK' });
-    }
-    else res.status(404).json({ message: 'Not found...' });
-    await Department.updateOne({ _id: req.params.id }, { $set: { name: name }});
-    res.json({ message: 'OK' });
-  } 
-  catch(err) {
+    if (dep) {
+      await Department.updateOne(
+        { _id: req.params.id },
+        { $set: { name: name } }
+      );
+      res.json({
+        message: 'OK',
+        modifiedDepartment: await Department.findById(req.params.id),
+      });
+    } else res.status(404).json({ message: 'Not found...' });
+  } catch (err) {
     res.status(500).json({ message: err });
   }
-  // req.db.collection('departments').updateOne({ _id: ObjectId(req.params.id) }, { $set: { name: name }}, err => {
-  //   if(err) res.status(500).json({ message: err });
-  //   else res.json({ message: 'OK' });
-  // });
 });
 
 router.delete('/departments/:id', async (req, res) => {

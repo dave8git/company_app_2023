@@ -1,11 +1,11 @@
 const express = require('express');
-const departmentModel = require('../models/department.model');
+const Employee = require('../models/employee.model');
 const router = express.Router();
-const ObjectId = require('mongodb').ObjectId;
+
 
 router.get('/employees', async (req, res) => {
   try {
-    res.json(await departmentModel.find());
+    res.json(await Employee.find());
   }
   catch(err) {  
     res.status(500).json({ message: err });
@@ -17,14 +17,13 @@ router.get('/employees', async (req, res) => {
 });
 
 router.get('/employees/random', async (req, res) => {
-  try { 
+  try {
     const count = await Employee.countDocuments();
     const rand = Math.floor(Math.random() * count);
     const emp = await Employee.findOne().skip(rand);
-    if(!emp) res.status(404).json({ message: 'Not found' });
+    if (!emp) res.status(404).json({ message: 'Not found' });
     else res.json(emp);
-  }
-  catch(err) {
+  } catch (err) {
     res.status(500).json({ message: err });
   }
   // req.db.collection('employees').aggregate([ { $sample: {size: 1} }]).toArray((err, data) => {

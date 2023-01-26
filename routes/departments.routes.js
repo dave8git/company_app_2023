@@ -71,7 +71,7 @@ router.put('/departments/:id', async (req, res) => {
       );
       res.json({
         message: 'OK',
-        modified: dep,
+        modifiedDepartment: await Department.findById(req.params.id),
       });
     } else res.status(404).json({ message: 'Not found...' });
   } catch (err) {
